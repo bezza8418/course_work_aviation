@@ -2,10 +2,8 @@
 Тесты для классов работы с файлами (JSONStorage).
 """
 
-import json
 import os
 
-import pytest
 from src.file_classes import JSONStorage
 
 
@@ -14,7 +12,7 @@ class TestJSONStorage:
 
     def test_init_creates_file(self, temp_json_file):
         """Тест: при инициализации создается файл."""
-        storage = JSONStorage(str(temp_json_file))
+        JSONStorage(str(temp_json_file))
         assert os.path.exists(temp_json_file)
 
     def test_add_aeroplane(self, temp_json_file, sample_aeroplane_dict):
@@ -37,13 +35,20 @@ class TestJSONStorage:
         data = storage.get_aeroplanes()
         assert len(data) == 1
 
-    def test_get_aeroplanes_filter_by_country(self, temp_json_file, sample_aeroplane_dict):
+    def test_get_aeroplanes_filter_by_country(
+        self, temp_json_file, sample_aeroplane_dict
+    ):
         """Тест фильтрации по стране."""
         storage = JSONStorage(str(temp_json_file))
         storage.add_aeroplane(sample_aeroplane_dict)
 
         # Добавим еще один самолет из другой страны
-        another = {"callsign": "ANOTHER", "origin_country": "Germany", "velocity": 200, "altitude": 8000}
+        another = {
+            "callsign": "ANOTHER",
+            "origin_country": "Germany",
+            "velocity": 200,
+            "altitude": 8000,
+        }
         storage.add_aeroplane(another)
 
         filtered = storage.get_aeroplanes(origin_country="France")
@@ -53,9 +58,30 @@ class TestJSONStorage:
     def test_get_aeroplanes_filter_by_altitude_range(self, temp_json_file):
         """Тест фильтрации по диапазону высот."""
         storage = JSONStorage(str(temp_json_file))
-        storage.add_aeroplane({"callsign": "LOW", "origin_country": "USA", "velocity": 200, "altitude": 3000})
-        storage.add_aeroplane({"callsign": "MED", "origin_country": "USA", "velocity": 250, "altitude": 8000})
-        storage.add_aeroplane({"callsign": "HIGH", "origin_country": "USA", "velocity": 300, "altitude": 12000})
+        storage.add_aeroplane(
+            {
+                "callsign": "LOW",
+                "origin_country": "USA",
+                "velocity": 200,
+                "altitude": 3000,
+            }
+        )
+        storage.add_aeroplane(
+            {
+                "callsign": "MED",
+                "origin_country": "USA",
+                "velocity": 250,
+                "altitude": 8000,
+            }
+        )
+        storage.add_aeroplane(
+            {
+                "callsign": "HIGH",
+                "origin_country": "USA",
+                "velocity": 300,
+                "altitude": 12000,
+            }
+        )
 
         filtered = storage.get_aeroplanes(altitude_min=5000, altitude_max=10000)
         assert len(filtered) == 1
@@ -80,9 +106,33 @@ class TestJSONStorage:
     def test_get_statistics(self, temp_json_file):
         """Тест получения статистики."""
         storage = JSONStorage(str(temp_json_file))
-        storage.add_aeroplane({"callsign": "A1", "origin_country": "Russia", "velocity": 250, "altitude": 10000, "on_ground": False})
-        storage.add_aeroplane({"callsign": "A2", "origin_country": "USA", "velocity": 300, "altitude": 12000, "on_ground": False})
-        storage.add_aeroplane({"callsign": "A3", "origin_country": "Russia", "velocity": 0, "altitude": 0, "on_ground": True})
+        storage.add_aeroplane(
+            {
+                "callsign": "A1",
+                "origin_country": "Russia",
+                "velocity": 250,
+                "altitude": 10000,
+                "on_ground": False,
+            }
+        )
+        storage.add_aeroplane(
+            {
+                "callsign": "A2",
+                "origin_country": "USA",
+                "velocity": 300,
+                "altitude": 12000,
+                "on_ground": False,
+            }
+        )
+        storage.add_aeroplane(
+            {
+                "callsign": "A3",
+                "origin_country": "Russia",
+                "velocity": 0,
+                "altitude": 0,
+                "on_ground": True,
+            }
+        )
 
         stats = storage.get_statistics()
         assert stats["total"] == 3

@@ -6,7 +6,7 @@
 import json
 import logging
 import os
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, List
 
 from src.abstract_classes import BaseFileStorage
 
@@ -70,7 +70,9 @@ class JSONStorage(BaseFileStorage):
             json.dump(data, f, ensure_ascii=False, indent=2)
 
     @staticmethod
-    def _is_duplicate(aeroplane_data: Dict[str, Any], existing_data: List[Dict[str, Any]]) -> bool:
+    def _is_duplicate(
+        aeroplane_data: Dict[str, Any], existing_data: List[Dict[str, Any]]
+    ) -> bool:
         """
         Приватный метод: проверяет наличие дубликата по уникальным полям.
 
@@ -83,8 +85,9 @@ class JSONStorage(BaseFileStorage):
         """
         for existing in existing_data:
             # Сравниваем по позывному и ICAO24 коду (оба поля должны совпадать)
-            if (existing.get("callsign") == aeroplane_data.get("callsign") and
-                    existing.get("icao24") == aeroplane_data.get("icao24")):
+            if existing.get("callsign") == aeroplane_data.get(
+                "callsign"
+            ) and existing.get("icao24") == aeroplane_data.get("icao24"):
                 return True
         return False
 
@@ -103,7 +106,9 @@ class JSONStorage(BaseFileStorage):
             data = self._load_data()
 
             if self._is_duplicate(aeroplane_data, data):
-                logger.info(f"⚠️ Самолет {aeroplane_data.get('callsign')} уже существует в файле")
+                logger.info(
+                    f"⚠️ Самолет {aeroplane_data.get('callsign')} уже существует в файле"
+                )
                 return False
 
             data.append(aeroplane_data)
@@ -184,9 +189,12 @@ class JSONStorage(BaseFileStorage):
 
             # Удаляем по совпадению callsign и icao24
             data = [
-                item for item in data
-                if not (item.get("callsign") == aeroplane_data.get("callsign") and
-                        item.get("icao24") == aeroplane_data.get("icao24"))
+                item
+                for item in data
+                if not (
+                    item.get("callsign") == aeroplane_data.get("callsign")
+                    and item.get("icao24") == aeroplane_data.get("icao24")
+                )
             ]
 
             if len(data) < original_length:

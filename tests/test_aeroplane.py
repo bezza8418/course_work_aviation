@@ -3,7 +3,6 @@
 Проверяют создание объектов, валидацию и методы сравнения.
 """
 
-import pytest
 from src.aeroplane import Aeroplane
 
 

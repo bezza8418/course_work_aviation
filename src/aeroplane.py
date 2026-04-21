@@ -38,16 +38,16 @@ class Aeroplane:
         "_on_ground",
         "_true_track",
         "_vertical_rate",
-        "_geo_altitude"
+        "_geo_altitude",
     )
 
     def __init__(
-            self,
-            callsign: str,
-            origin_country: str,
-            velocity: float,
-            altitude: float,
-            **kwargs
+        self,
+        callsign: str,
+        origin_country: str,
+        velocity: float,
+        altitude: float,
+        **kwargs: Any,
     ) -> None:
         """
         Инициализация объекта самолета.
@@ -59,13 +59,13 @@ class Aeroplane:
             altitude: Высота полета (м)
             **kwargs: Дополнительные параметры (icao24, координаты и т.д.)
         """
-        self._callsign = self._validate_string(callsign, "callsign")
-        self._origin_country = self._validate_string(origin_country, "origin_country")
+        self._callsign = self._validate_string(callsign)
+        self._origin_country = self._validate_string(origin_country)
         self._velocity = self._validate_velocity(velocity)
         self._altitude = self._validate_altitude(altitude)
-        self._icao24 = self._validate_string(kwargs.get("icao24", ""), "icao24")
-        self._longitude = self._validate_float(kwargs.get("longitude"), "longitude")
-        self._latitude = self._validate_float(kwargs.get("latitude"), "latitude")
+        self._icao24 = self._validate_string(kwargs.get("icao24", ""))
+        self._longitude = self._validate_float(kwargs.get("longitude"))
+        self._latitude = self._validate_float(kwargs.get("latitude"))
         self._on_ground = kwargs.get("on_ground", True)
         self._true_track = kwargs.get("true_track")
         self._vertical_rate = kwargs.get("vertical_rate")
@@ -74,20 +74,19 @@ class Aeroplane:
     # ==================== Приватные методы валидации ====================
 
     @staticmethod
-    def _validate_string(value: Any, field_name: str) -> str:
+    def _validate_string(value: Any) -> str:
         """
         Приватный метод валидации строковых значений.
 
         Args:
             value: Проверяемое значение
-            field_name: Имя поля (для логирования)
 
         Returns:
             str: Валидная строка или значение по умолчанию
         """
         if not value or not isinstance(value, str):
             return "Unknown"
-        return value.strip()
+        return value.strip()  # type: ignore[no-any-return]
 
     @staticmethod
     def _validate_velocity(value: Any) -> float:
@@ -125,13 +124,12 @@ class Aeroplane:
             return 0.0
 
     @staticmethod
-    def _validate_float(value: Any, field_name: str) -> Optional[float]:
+    def _validate_float(value: Any) -> Optional[float]:
         """
         Приватный метод валидации чисел с плавающей точкой.
 
         Args:
             value: Проверяемое значение
-            field_name: Имя поля (для логирования)
 
         Returns:
             Optional[float]: Валидное число или None
@@ -195,7 +193,7 @@ class Aeroplane:
         """Сравнение по высоте: неравенство."""
         if not isinstance(other, Aeroplane):
             return NotImplemented
-        return self.altitude != other.altitude
+        return self.altitude != other.altitude  # type: ignore[no-any-return]
 
     def __lt__(self, other: "Aeroplane") -> bool:
         """Сравнение по высоте: меньше."""
@@ -217,9 +215,11 @@ class Aeroplane:
 
     def __repr__(self) -> str:
         """Строковое представление объекта."""
-        return (f"Aeroplane(callsign='{self.callsign}', "
-                f"origin_country='{self.origin_country}', "
-                f"velocity={self.velocity}, altitude={self.altitude})")
+        return (
+            f"Aeroplane(callsign='{self.callsign}', "
+            f"origin_country='{self.origin_country}', "
+            f"velocity={self.velocity}, altitude={self.altitude})"
+        )
 
     def to_dict(self) -> Dict[str, Any]:
         """

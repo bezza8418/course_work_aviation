@@ -4,23 +4,17 @@
 """
 
 import logging
-from typing import List, Optional
 
 from src.aeroplane import Aeroplane
 from src.api_classes import AviationAPI
 from src.file_classes import JSONStorage
-from src.utils import (
-    filter_by_altitude_range,
-    filter_by_country,
-    get_top_n_aeroplanes,
-    print_aeroplanes,
-    sort_aeroplanes_by_altitude,
-)
+from src.utils import (filter_by_altitude_range, filter_by_country,
+                       get_top_n_aeroplanes, print_aeroplanes,
+                       sort_aeroplanes_by_altitude)
 
 # Настройка логирования
 logging.basicConfig(
-    level=logging.INFO,
-    format="%(asctime)s - %(levelname)s - %(message)s"
+    level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s"
 )
 logger = logging.getLogger(__name__)
 
@@ -44,14 +38,18 @@ def user_interaction() -> None:
         print("❌ Название страны не может быть пустым!")
         return
 
-    print(f"\n🔍 Получение информации о самолетах в воздушном пространстве {country}...")
+    print(
+        f"\n🔍 Получение информации о самолетах в воздушном пространстве {country}..."
+    )
 
     # Получаем данные через API
     aeroplanes_data = api.get_aeroplanes(country)
 
     if not aeroplanes_data:
         print(f"⚠️ Не удалось получить данные о самолетах для {country}.")
-        print("   Возможные причины: страна не найдена или в воздушном пространстве нет самолетов.")
+        print(
+            "   Возможные причины: страна не найдена или в воздушном пространстве нет самолетов."
+        )
         return
 
     # Преобразуем в объекты Aeroplane
@@ -71,7 +69,9 @@ def user_interaction() -> None:
     print("-" * 50)
 
     try:
-        top_n_input = input("✈️ Введите количество самолетов для вывода в топ (например, 10): ").strip()
+        top_n_input = input(
+            "✈️ Введите количество самолетов для вывода в топ (например, 10): "
+        ).strip()
         top_n = int(top_n_input) if top_n_input else 10
     except ValueError:
         print("❌ Неверный ввод. Будет использовано значение по умолчанию (10)")
@@ -84,14 +84,18 @@ def user_interaction() -> None:
     print_aeroplanes(top_aeroplanes, f"ТОП-{top_n} ПО ВЫСОТЕ ПОЛЕТА")
 
     # Шаг 3: Фильтрация по стране регистрации
-    countries_input = input("\n🌍 Введите страны для фильтрации через пробел (или Enter для пропуска): ").strip()
+    countries_input = input(
+        "\n🌍 Введите страны для фильтрации через пробел (или Enter для пропуска): "
+    ).strip()
     if countries_input:
         filter_countries = [c.strip() for c in countries_input.split()]
         filtered_by_country = filter_by_country(aeroplanes, filter_countries)
         print_aeroplanes(filtered_by_country, f"САМОЛЕТЫ ИЗ СТРАН {filter_countries}")
 
     # Шаг 4: Фильтрация по диапазону высот
-    altitude_input = input("\n📏 Введите диапазон высот (например: 1000-5000, 10000, или Enter для пропуска): ").strip()
+    altitude_input = input(
+        "\n📏 Введите диапазон высот (например: 1000-5000, 10000, или Enter для пропуска): "
+    ).strip()
     if altitude_input:
         try:
             if "-" in altitude_input:
@@ -102,8 +106,12 @@ def user_interaction() -> None:
                 min_alt = None
                 max_alt = float(altitude_input)
 
-            filtered_by_altitude = filter_by_altitude_range(aeroplanes, min_alt, max_alt)
-            print_aeroplanes(filtered_by_altitude, f"САМОЛЕТЫ В ДИАПАЗОНЕ ВЫСОТ {altitude_input}")
+            filtered_by_altitude = filter_by_altitude_range(
+                aeroplanes, min_alt, max_alt
+            )
+            print_aeroplanes(
+                filtered_by_altitude, f"САМОЛЕТЫ В ДИАПАЗОНЕ ВЫСОТ {altitude_input}"
+            )
         except ValueError:
             print("❌ Неверный формат диапазона высот")
 

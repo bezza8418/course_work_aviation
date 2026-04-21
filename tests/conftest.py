@@ -4,6 +4,7 @@
 """
 
 import pytest
+
 from src.aeroplane import Aeroplane
 
 
@@ -18,7 +19,7 @@ def sample_aeroplane():
         icao24="123456",
         longitude=37.6176,
         latitude=55.7558,
-        on_ground=False
+        on_ground=False,
     )
 
 

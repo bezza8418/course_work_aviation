@@ -43,9 +43,7 @@ def sort_aeroplanes_by_velocity(
     return sorted(aeroplanes, key=lambda a: a.velocity, reverse=reverse)
 
 
-def get_top_n_aeroplanes(
-    aeroplanes: List[Aeroplane], top_n: int
-) -> List[Aeroplane]:
+def get_top_n_aeroplanes(aeroplanes: List[Aeroplane], top_n: int) -> List[Aeroplane]:
     """
     Получение топ N самолетов.
 
@@ -87,7 +85,7 @@ def filter_by_country(
 def filter_by_altitude_range(
     aeroplanes: List[Aeroplane],
     min_altitude: Optional[float] = None,
-    max_altitude: Optional[float] = None
+    max_altitude: Optional[float] = None,
 ) -> List[Aeroplane]:
     """
     Фильтрация самолетов по диапазону высот.
@@ -115,7 +113,7 @@ def filter_by_altitude_range(
 def filter_by_velocity_range(
     aeroplanes: List[Aeroplane],
     min_velocity: Optional[float] = None,
-    max_velocity: Optional[float] = None
+    max_velocity: Optional[float] = None,
 ) -> List[Aeroplane]:
     """
     Фильтрация самолетов по диапазону скоростей.
@@ -155,18 +153,24 @@ def print_aeroplanes(aeroplanes: List[Aeroplane], title: str = "САМОЛЕТЫ
     print("\n" + "=" * 110)
     print(f"📊 {title}")
     print("=" * 110)
-    print(f"{'Позывной':<12} {'Страна':<25} {'Скорость (м/с)':<15} {'Высота (м)':<12} {'На земле':<10}")
+    print(
+        f"{'Позывной':<12} {'Страна':<25} {'Скорость (м/с)':<15} {'Высота (м)':<12} {'На земле':<10}"
+    )
     print("-" * 110)
 
     for a in aeroplanes:
         on_ground = "Да" if a.on_ground else "Нет"
-        print(f"{a.callsign:<12} {a.origin_country:<25} {a.velocity:<15.1f} {a.altitude:<12.0f} {on_ground:<10}")
+        print(
+            f"{a.callsign:<12} {a.origin_country:<25} {a.velocity:<15.1f} {a.altitude:<12.0f} {on_ground:<10}"
+        )
 
     print("=" * 110)
     print(f"📈 Всего: {len(aeroplanes)} самолетов")
 
 
-def parse_altitude_range(altitude_input: str) -> tuple[Optional[float], Optional[float]]:
+def parse_altitude_range(
+    altitude_input: str,
+) -> tuple[Optional[float], Optional[float]]:
     """
     Парсинг введенного пользователем диапазона высот.
 

@@ -2,18 +2,10 @@
 Тесты для вспомогательных функций из модуля utils.
 """
 
-import pytest
-from src.aeroplane import Aeroplane
-from src.utils import (
-    filter_by_altitude_range,
-    filter_by_country,
-    filter_by_velocity_range,
-    get_top_n_aeroplanes,
-    parse_altitude_range,
-    print_aeroplanes,
-    sort_aeroplanes_by_altitude,
-    sort_aeroplanes_by_velocity,
-)
+from src.utils import (filter_by_altitude_range, filter_by_country,
+                       filter_by_velocity_range, get_top_n_aeroplanes,
+                       parse_altitude_range, sort_aeroplanes_by_altitude,
+                       sort_aeroplanes_by_velocity)
 
 
 class TestUtils:
@@ -64,7 +56,9 @@ class TestUtils:
 
     def test_filter_by_altitude_range(self, sample_aeroplanes_list):
         """Тест фильтрации по диапазону высот."""
-        filtered = filter_by_altitude_range(sample_aeroplanes_list, min_altitude=9000, max_altitude=13000)
+        filtered = filter_by_altitude_range(
+            sample_aeroplanes_list, min_altitude=9000, max_altitude=13000
+        )
         assert len(filtered) == 2
         assert all(9000 <= a.altitude <= 13000 for a in filtered)
 
@@ -75,7 +69,9 @@ class TestUtils:
 
     def test_filter_by_velocity_range(self, sample_aeroplanes_list):
         """Тест фильтрации по диапазону скоростей."""
-        filtered = filter_by_velocity_range(sample_aeroplanes_list, min_velocity=200, max_velocity=280)
+        filtered = filter_by_velocity_range(
+            sample_aeroplanes_list, min_velocity=200, max_velocity=280
+        )
         assert len(filtered) == 2
 
     def test_parse_altitude_range_with_dash(self):
