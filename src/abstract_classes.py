@@ -1,0 +1,62 @@
+"""
+Модуль с абстрактными классами для работы с API.
+Определяет интерфейсы для подключения к внешним сервисам.
+"""
+
+from abc import ABC, abstractmethod
+from typing import Any, Dict, List, Optional
+
+
+class BaseAPI(ABC):
+    """
+    Абстрактный базовый класс для работы с внешними API.
+
+    Этот класс определяет интерфейс, который должны реализовать
+    все конкретные классы для работы с API сервисами.
+    """
+
+    def __init__(self, base_url: str) -> None:
+        """
+        Инициализация базового API класса.
+
+        Args:
+            base_url: Базовый URL API сервиса
+        """
+        self._base_url = base_url
+        self._connected = False
+
+    @abstractmethod
+    def _connect(self) -> bool:
+        """
+        Приватный метод для установления соединения с API.
+
+        Returns:
+            bool: True если подключение успешно, иначе False
+        """
+        pass
+
+    @abstractmethod
+    def get_aeroplanes(self, country: str) -> List[Dict[str, Any]]:
+        """
+        Получение информации о самолетах для указанной страны.
+
+        Args:
+            country: Название страны
+
+        Returns:
+            List[Dict[str, Any]]: Список словарей с данными о самолетах
+        """
+        pass
+
+    @abstractmethod
+    def get_country_bounding_box(self, country: str) -> Optional[List[float]]:
+        """
+        Получение географических границ (bounding box) страны.
+
+        Args:
+            country: Название страны
+
+        Returns:
+            Optional[List[float]]: Список [юг, север, запад, восток] или None
+        """
+        pass
