@@ -1,0 +1,24 @@
+[project]
+name = "course-work-aviation"
+version = "0.1.0"
+description = "Курсовая работа: мониторинг воздушных судов"
+authors = [
+    {name = "viktor bezuglov", email = "bezza8418@gmail.com"}
+]
+requires-python = ">=3.14"
+dependencies = [
+    "requests>=2.31.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=7.0.0",
+    "pytest-cov>=4.0.0",
+]
+
+[build-system]
+requires = ["poetry-core>=2.0.0,<3.0.0"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.poetry]
+package-mode = false
