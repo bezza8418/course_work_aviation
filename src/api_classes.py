@@ -10,6 +10,9 @@ import requests
 
 from src.abstract_classes import BaseAPI
 
+# User-Agent для идентификации приложения при запросах к API
+APP_USER_AGENT = "CourseWorkAviationApp/1.0 (coursework; student@example.com)"
+
 # Настройка логирования
 logging.basicConfig(
     level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s"
@@ -39,17 +42,30 @@ class AviationAPI(BaseAPI):
         """
         try:
             # Проверяем доступность Nominatim
-            params: dict[str, str | int] = {"q": "test", "format": "json", "limit": 1}
-            response = requests.get(self._nominatim_url, params=params, timeout=10)
-            if response.status_code == 200:
-                self._connected = True
-                logger.info("✅ API сервисы доступны")
-                return True
-            else:
-                logger.error(f"❌ Ошибка подключения к API: {response.status_code}")
+            headers = {"User-Agent": APP_USER_AGENT}
+            params = {"q": "test", "format": "json", "limit": 1}
+            response = requests.get(
+                self._nominatim_url, headers=headers, params=params, timeout=10
+            )
+            if response.status_code != 200:
+                logger.error(f"❌ Nominatim недоступен: {response.status_code}")
+                self._connected = False
                 return False
+
+            # Проверяем доступность OpenSky
+            response = requests.get(self._opensky_url, timeout=10)
+            if response.status_code != 200:
+                logger.error(f"❌ OpenSky недоступен: {response.status_code}")
+                self._connected = False
+                return False
+
+            self._connected = True
+            logger.info("✅ Все API сервисы доступны")
+            return True
+
         except requests.RequestException as e:
             logger.error(f"❌ Ошибка соединения: {e}")
+            self._connected = False
             return False
 
     def get_country_bounding_box(self, country: str) -> Optional[List[float]]:
@@ -107,6 +123,11 @@ class AviationAPI(BaseAPI):
         Returns:
             List[Dict[str, Any]]: Список словарей с данными о самолетах
         """
+        # Проверяем подключение к API
+        if not self._connected and not self._connect():
+            logger.error("❌ Нет подключения к API сервисам")
+            return []
+
         # Получаем bounding box страны
         bbox = self.get_country_bounding_box(country)
 

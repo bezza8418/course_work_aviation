@@ -4,6 +4,7 @@
 """
 
 import logging
+from typing import List, Optional
 
 from src.aeroplane import Aeroplane
 from src.api_classes import AviationAPI
@@ -17,6 +18,88 @@ logging.basicConfig(
     level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s"
 )
 logger = logging.getLogger(__name__)
+
+
+def get_country_from_user() -> str:
+    """
+    Запрашивает у пользователя название страны.
+
+    Returns:
+        str: Название страны или пустая строка
+    """
+    country = input("\n🌍 Введите название страны для поиска самолетов: ").strip()
+    if not country:
+        print("❌ Название страны не может быть пустым!")
+        return ""
+    return country
+
+
+def get_top_n_from_user() -> int:
+    """
+    Запрашивает у пользователя количество для топа.
+
+    Returns:
+        int: Количество самолетов для вывода
+    """
+    try:
+        top_n_input = input(
+            "✈️ Введите количество самолетов для вывода в топ (например, 10): "
+        ).strip()
+        return int(top_n_input) if top_n_input else 10
+    except ValueError:
+        print("❌ Неверный ввод. Будет использовано значение по умолчанию (10)")
+        return 10
+
+
+def get_countries_filter_from_user() -> List[str]:
+    """
+    Запрашивает у пользователя страны для фильтрации.
+
+    Returns:
+        List[str]: Список стран для фильтрации
+    """
+    countries_input = input(
+        "\n🌍 Введите страны для фильтрации через пробел (или Enter для пропуска): "
+    ).strip()
+    return [c.strip() for c in countries_input.split()] if countries_input else []
+
+
+def get_altitude_filter_from_user() -> Optional[str]:
+    """
+    Запрашивает у пользователя диапазон высот.
+
+    Returns:
+        Optional[str]: Строка с диапазоном или None
+    """
+    return input(
+        "\n📏 Введите диапазон высот (например: 1000-5000, 10000, или Enter для пропуска): "
+    ).strip()
+
+
+def display_statistics(storage: JSONStorage) -> None:
+    """
+    Отображает статистику из файла.
+
+    Args:
+        storage: Экземпляр JSONStorage
+    """
+    stats = storage.get_statistics()
+    print("\n" + "-" * 50)
+    print("📈 СТАТИСТИКА ПО СОХРАНЕННЫМ ДАННЫМ")
+    print("-" * 50)
+    print(f"📊 Всего сохранено самолетов: {stats['total']}")
+
+    # Красиво форматируем список стран
+    countries = stats.get("countries", [])
+    if countries:
+        print(f"🌍 Уникальных стран: {len(countries)}")
+    else:
+        print("🌍 Уникальных стран: нет данных")
+
+    print(f"📏 Средняя высота: {stats['avg_altitude']:.0f} м")
+    print(f"⚡ Средняя скорость: {stats['avg_velocity']:.1f} м/с")
+    print(f"🛬 На земле: {stats['on_ground_count']}")
+    print(f"🛫 В воздухе: {stats['in_air_count']}")
 
 
 def user_interaction() -> None:
@@ -33,9 +116,8 @@ def user_interaction() -> None:
     storage = JSONStorage()
 
     # Шаг 1: Ввод названия страны
-    country = input("\n🌍 Введите название страны для поиска самолетов: ").strip()
+    country = get_country_from_user()
     if not country:
-        print("❌ Название страны не может быть пустым!")
         return
 
     print(
@@ -68,14 +150,7 @@ def user_interaction() -> None:
     print("📊 ФИЛЬТРАЦИЯ И СОРТИРОВКА ДАННЫХ")
     print("-" * 50)
 
-    try:
-        top_n_input = input(
-            "✈️ Введите количество самолетов для вывода в топ (например, 10): "
-        ).strip()
-        top_n = int(top_n_input) if top_n_input else 10
-    except ValueError:
-        print("❌ Неверный ввод. Будет использовано значение по умолчанию (10)")
-        top_n = 10
+    top_n = get_top_n_from_user()
 
     # Сортируем по высоте и получаем топ
     sorted_by_altitude = sort_aeroplanes_by_altitude(aeroplanes, reverse=True)
@@ -84,18 +159,15 @@ def user_interaction() -> None:
     print_aeroplanes(top_aeroplanes, f"ТОП-{top_n} ПО ВЫСОТЕ ПОЛЕТА")
 
     # Шаг 3: Фильтрация по стране регистрации
-    countries_input = input(
-        "\n🌍 Введите страны для фильтрации через пробел (или Enter для пропуска): "
-    ).strip()
-    if countries_input:
-        filter_countries = [c.strip() for c in countries_input.split()]
+    filter_countries = get_countries_filter_from_user()
+    if filter_countries:
         filtered_by_country = filter_by_country(aeroplanes, filter_countries)
-        print_aeroplanes(filtered_by_country, f"САМОЛЕТЫ ИЗ СТРАН {filter_countries}")
+        print_aeroplanes(
+            filtered_by_country, f"САМОЛЕТЫ ИЗ СТРАН {', '.join(filter_countries)}"
+        )
 
     # Шаг 4: Фильтрация по диапазону высот
-    altitude_input = input(
-        "\n📏 Введите диапазон высот (например: 1000-5000, 10000, или Enter для пропуска): "
-    ).strip()
+    altitude_input = get_altitude_filter_from_user()
     if altitude_input:
         try:
             if "-" in altitude_input:
@@ -115,17 +187,8 @@ def user_interaction() -> None:
         except ValueError:
             print("❌ Неверный формат диапазона высот")
 
-    # Дополнительно: показать статистику из файла
-    print("\n" + "-" * 50)
-    print("📈 СТАТИСТИКА ПО СОХРАНЕННЫМ ДАННЫМ")
-    print("-" * 50)
-    stats = storage.get_statistics()
-    print(f"📊 Всего сохранено самолетов: {stats['total']}")
-    print(f"🌍 Уникальных стран: {len(stats['countries'])}")
-    print(f"📏 Средняя высота: {stats['avg_altitude']:.0f} м")
-    print(f"⚡ Средняя скорость: {stats['avg_velocity']:.1f} м/с")
-    print(f"🛬 На земле: {stats['on_ground_count']}")
-    print(f"🛫 В воздухе: {stats['in_air_count']}")
+    # Шаг 5: Показать статистику
+    display_statistics(storage)
 
 
 def main() -> None:

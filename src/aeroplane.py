@@ -104,7 +104,7 @@ class Aeroplane:
             if val < 0:
                 return 0.0
             return val
-        except (TypeError, ValueError):
+        except TypeError, ValueError:
             return 0.0
 
     @staticmethod
@@ -120,7 +120,7 @@ class Aeroplane:
         """
         try:
             return float(value)
-        except (TypeError, ValueError):
+        except TypeError, ValueError:
             return 0.0
 
     @staticmethod
@@ -136,7 +136,7 @@ class Aeroplane:
         """
         try:
             return float(value) if value is not None else None
-        except (TypeError, ValueError):
+        except TypeError, ValueError:
             return None
 
     # ==================== Геттеры (свойства) ====================
